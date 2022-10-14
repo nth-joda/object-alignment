@@ -1,12 +1,12 @@
 import cv2
 import numpy as np
-MAX_FEATURES = 1000
-GOOD_MATCH_PERCENT = 0.95
+MAX_FEATURES = 200
+GOOD_MATCH_PERCENT = 0.6
 
 import matplotlib.pyplot as plt
 
 
-img_template = cv2.imread('assets/template_cmnd.jpg')
+img_template = cv2.imread('assets/CMND01T.png')
 img_need_aligned = cv2.imread('assets/testCmnd.jpg')
 
 im1Gray = cv2.cvtColor(img_need_aligned, cv2.COLOR_BGR2GRAY)
@@ -22,7 +22,7 @@ matcher = cv2.DescriptorMatcher_create(cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING
 matches = matcher.match(descriptors1, descriptors2, None)
 
 # # Sort matches by score
-# matches.sort(key=lambda x: x.distance, reverse=False)
+matches = sorted(matches, key=lambda x: x.distance, reverse=False)
 
 # Remove not so good matches
 numGoodMatches = int(len(matches) * GOOD_MATCH_PERCENT)
@@ -46,5 +46,5 @@ h, mask = cv2.findHomography(points1, points2, cv2.RANSAC)
 # Use homography
 height, width, channels = im2.shape
 im1Reg = cv2.warpPerspective(im1, h, (width, height))
-imgplot = plt.imshow(imMatches)
+imgplot = plt.imshow(im1Reg)
 plt.show()
